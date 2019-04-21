@@ -1,0 +1,43 @@
+{
+  "comment-query": "53.548369,-6.779129?exclude=minutely,hourly,daily&units=si",
+  "latitude": 53.548369,
+  "longitude": -6.779129,
+  "timezone": "Europe/Dublin",
+  "currently": {
+    "time": 1555802165,
+    "summary": "Mostly Cloudy",
+    "icon": "partly-cloudy-night",
+    "nearestStormDistance": 122,
+    "nearestStormBearing": 15,
+    "precipIntensity": 0,
+    "precipProbability": 0,
+    "temperature": 12.89,
+    "apparentTemperature": 12.89,
+    "dewPoint": 9.27,
+    "humidity": 0.79,
+    "pressure": 1026.09,
+    "windSpeed": 2.55,
+    "windGust": 3.32,
+    "windBearing": 225,
+    "cloudCover": 0.76,
+    "uvIndex": 0,
+    "visibility": 10.4,
+    "ozone": 314.55
+  },
+  "flags": {
+    "sources": [
+      "nearest-precip",
+      "meteoalarm",
+      "cmc",
+      "gfs",
+      "icon",
+      "isd",
+      "madis",
+      "darksky"
+    ],
+    "meteoalarm-license": "Based on data from EUMETNET - MeteoAlarm [https://www.meteoalarm.eu/]. Time delays between this website and the MeteoAlarm website are possible; for the most up to date information about alert levels as published by the participating National Meteorological Services please use the MeteoAlarm website.",
+    "nearest-station": 34.974,
+    "units": "si"
+  },
+  "offset": 1
+}
