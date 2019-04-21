@@ -3,7 +3,7 @@
 module Main where
 
 import DarkSky
-import Data.Maybe (fromJust, isJust)
+import Data.Maybe (fromJust, isJust, fromMaybe, maybe)
 import qualified Data.Text as T
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson
@@ -12,24 +12,30 @@ main :: IO ()
 main = do
   json <- B.readFile "test/data/now.json"
   let response        = fromJust $ decode json
-      tempDescription = fallback tempString $ currently response
-      warnDescription = fallback alertString $ alerts response
-      fullString      = T.intercalate ", " [tempDescription, warnDescription]
+      tempDescription = maybe "" tempString $ currently response
+      warnDescription = maybe "" alertString $ alerts response
+      rainDescription = maybe "" precipString $ currently response
+      fullString      = T.intercalate ", " $ filter (/= "") [tempDescription, rainDescription, warnDescription]
   writeFile "output.txt" $ T.unpack fullString
 
-fallback :: (a -> T.Text) -> Maybe a -> T.Text
-fallback descriptor opt =
-  if isJust opt then
-    descriptor $ fromJust opt
-  else
-    ""
+precipString :: Point -> T.Text
+precipString point =
+    if intensity < 0.1 then
+      ""
+    else
+      case kind of
+        Just precip -> T.concat [precip, " (", T.pack $ show intensity, " mm)"]
+        Nothing     -> ""
+  where
+    intensity = fromMaybe 0 $ precipIntensity point
+    kind = precipType point
 
 tempString :: Point -> T.Text
 tempString point = T.intercalate " " $ map fromJust $
   if includeBoth actual apparent then
       [actualString, apparentString]
     else
-      take 1 $ takeWhile isJust [actualString, apparentString, fallback]
+      take 1 $ filter isJust [actualString, apparentString, fallback]
   where
     actual = temperature point
     actualString = fmap (tempCelsius False) actual
@@ -51,6 +57,7 @@ tempCelsius wrap temp = T.concat $
     middle = T.pack . show $ temp
 
 alertString :: [Alert] -> T.Text
+alertString []     = ""
 alertString alerts = T.concat ["[", T.intercalate ", " $ severityTexts, "]"]
   where
     alertTypes = ["advisory", "watch", "warning"]

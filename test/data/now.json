@@ -11,6 +11,7 @@
     "nearestStormBearing": 15,
     "precipIntensity": 0,
     "precipProbability": 0,
+    "precipType": "sleet",
     "temperature": 12.89,
     "apparentTemperature": 13.89,
     "dewPoint": 9.27,

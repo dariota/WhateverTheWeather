@@ -7,6 +7,8 @@ module DarkSky
       currently,
     Point,
       apparentTemperature,
+      precipIntensity,
+      precipType,
       temperature,
     Alert,
       severity
