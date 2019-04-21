@@ -3,9 +3,9 @@
 module DarkSky
   (
     Response,
-      latitude,
-      longitude,
+      alerts,
     Alert,
+      severity
   ) where
 
 import Data.Aeson
@@ -26,10 +26,9 @@ data Alert =
   Alert {
     description :: Text,
     expires :: Int,
-    regions :: [Text],
     severity :: Text,
     time :: Int,
-    title :: Int,
+    title :: Text,
     uri :: Text
   } deriving (Show, Generic)
 

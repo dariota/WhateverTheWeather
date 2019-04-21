@@ -24,6 +24,32 @@
     "visibility": 10.4,
     "ozone": 314.55
   },
+  "alerts": [
+    {
+      "description": "Oh shit",
+      "expires": 1500000000,
+      "time": 1400000000,
+      "title": "It's raining sideways",
+      "severity": "warning",
+      "uri": "https://darksky.net/dev/docs#alerts"
+    },
+    {
+      "description": "Oh shit",
+      "expires": 1500000000,
+      "time": 1400000000,
+      "title": "It's raining sideways",
+      "severity": "warning",
+      "uri": "https://darksky.net/dev/docs#alerts"
+    },
+    {
+      "description": "Oh shit",
+      "expires": 1500000000,
+      "time": 1400000000,
+      "title": "It's raining sideways",
+      "severity": "advisory",
+      "uri": "https://darksky.net/dev/docs#alerts"
+    }
+  ],
   "flags": {
     "sources": [
       "nearest-precip",
