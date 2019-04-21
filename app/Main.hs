@@ -3,11 +3,26 @@
 module Main where
 
 import DarkSky
-import qualified Data.Text as T
 import Data.Maybe (fromJust, isJust)
+import qualified Data.Text as T
+import qualified Data.ByteString.Lazy as B
+import Data.Aeson
 
 main :: IO ()
-main = print "hello"
+main = do
+  json <- B.readFile "test/data/now.json"
+  let response        = fromJust $ decode json
+      tempDescription = fallback tempString $ currently response
+      warnDescription = fallback alertString $ alerts response
+      fullString      = T.intercalate ", " [tempDescription, warnDescription]
+  writeFile "output.txt" $ T.unpack fullString
+
+fallback :: (a -> T.Text) -> Maybe a -> T.Text
+fallback descriptor opt =
+  if isJust opt then
+    descriptor $ fromJust opt
+  else
+    ""
 
 tempString :: Point -> T.Text
 tempString point = T.intercalate " " $ map fromJust $
