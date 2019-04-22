@@ -11,12 +11,25 @@ import Data.Aeson
 main :: IO ()
 main = do
   json <- B.readFile "test/data/now.json"
-  let response        = fromJust $ decode json
-      tempDescription = maybe "" tempString $ currently response
-      warnDescription = maybe "" alertString $ alerts response
-      rainDescription = maybe "" precipString $ currently response
-      fullString      = T.intercalate ", " $ filter (/= "") [tempDescription, rainDescription, warnDescription]
-  writeFile "output.txt" $ T.unpack fullString
+  let response         = fromJust $ decode json
+      tempDescription  = maybe "" tempString $ currently response
+      warnDescription  = maybe "" alertString $ alerts response
+      rainDescription  = maybe "" precipString $ currently response
+      cloudDescription = maybe "" cloudString $ currently response
+      fullString       = T.intercalate ", " $ filter (/= "") [tempDescription, cloudDescription, rainDescription, warnDescription]
+  writeFile "output.txt" $ T.unpack $ T.concat [fullString, "\n"]
+
+cloudString :: Point -> T.Text
+cloudString point =
+  case cloudCover point of
+    Just cover -> coverString cover
+    Nothing    -> ""
+
+coverString :: Float -> T.Text
+coverString cover
+  | cover > 0.75 = "overcast"
+  | cover > 0.50 = "cloudy"
+  | otherwise    = "clear"
 
 precipString :: Point -> T.Text
 precipString point =

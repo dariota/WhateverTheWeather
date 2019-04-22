@@ -7,6 +7,7 @@ module DarkSky
       currently,
     Point,
       apparentTemperature,
+      cloudCover,
       precipIntensity,
       precipType,
       temperature,
