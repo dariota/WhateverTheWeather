@@ -23,6 +23,7 @@ dependencies:
 - aeson
 - text
 - bytestring
+- ansi-terminal
 
 library:
   source-dirs: src
