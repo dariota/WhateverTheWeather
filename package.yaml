@@ -24,6 +24,9 @@ dependencies:
 - text
 - bytestring
 - ansi-terminal
+- http-client
+- http-client-tls
+- directory
 
 library:
   source-dirs: src
