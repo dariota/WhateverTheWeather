@@ -26,8 +26,10 @@ dependencies:
 - ansi-terminal
 - http-client
 - http-client-tls
+- http-types
 - directory
 - mtl
+- utf8-string
 
 library:
   source-dirs: src

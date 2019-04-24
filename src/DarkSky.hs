@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
 
 module DarkSky
   (
@@ -12,12 +12,21 @@ module DarkSky
       precipType,
       temperature,
     Alert,
-      severity
+      severity,
+    getCurrentData
   ) where
 
+import Context
 import Data.Aeson
-import GHC.Generics
+import Data.ByteString.UTF8 hiding (decode)
+import Data.Maybe
 import Data.Text
+import GHC.Generics
+import Network.HTTP.Types
+import qualified Config as C
+import qualified Data.ByteString as B
+import qualified Data.ByteString.Lazy as Lazy
+import qualified Network.HTTP.Client as N
 
 data Response =
   Response {
@@ -67,3 +76,52 @@ data Alert =
   } deriving (Show, Generic)
 
 instance FromJSON Alert
+
+getCurrentData :: App Response
+getCurrentData = do
+  request <- buildRequest
+  manager <- asks httpManager
+  response <- liftIO $ N.httpLbs request manager
+  parseResponse response
+
+parseResponse :: N.Response Lazy.ByteString -> App Response
+parseResponse response = do
+  let status = N.responseStatus response
+      code = statusCode status
+      parsed = decode (N.responseBody response)
+  if code /= 200 then
+    throwError $ Prelude.concat ["Error: ", toString $ statusMessage status, ", code: ", show $ code]
+  else
+    if isJust parsed then
+       return $ fromJust parsed
+    else
+      throwError "parse error"
+
+buildRequest :: App N.Request
+buildRequest = do
+  config <- asks config
+  let key = fromString $ unpack $ C.api_key config
+      lat = fromString $ show $ C.latitude config
+      lon = fromString $ show $ C.longitude config
+      request = baseRequest {
+                  N.path = B.concat [basePath, "/", key, "/", lon, ",", lat],
+                  N.queryString = defaultParams
+                }
+  return request
+
+baseRequest :: N.Request
+baseRequest = N.defaultRequest {
+                N.secure = True,
+                N.port = 443,
+                N.host = baseHost,
+                N.method = "GET"
+              }
+
+baseHost :: B.ByteString
+baseHost = "api.darksky.net"
+
+basePath :: B.ByteString
+basePath = "forecast"
+
+defaultParams :: B.ByteString
+defaultParams = "exclude=minutely,hourly,daily,flags&units=si"
