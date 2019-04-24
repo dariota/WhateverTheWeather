@@ -27,6 +27,7 @@ dependencies:
 - http-client
 - http-client-tls
 - directory
+- mtl
 
 library:
   source-dirs: src
