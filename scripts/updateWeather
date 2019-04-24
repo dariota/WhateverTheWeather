@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+printf "[%s] " "$(date +'%H:%M')" > ~/.wtw/cache
+/usr/local/sbin/weather >> ~/.wtw/cache
