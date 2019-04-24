@@ -2,26 +2,30 @@
 
 module Main where
 
-import DarkSky
+import Config
 import Console
+import DarkSky
+import Context
 import Data.Maybe (fromJust, isJust, fromMaybe)
+import Network.HTTP.Client hiding (Response)
+import Network.HTTP.Client.TLS
+import qualified Data.ByteString.Lazy as B
 import qualified Data.List as L
 import qualified Data.Text as T (Text, pack, unpack, concat)
 import qualified System.Console.ANSI as C
 import qualified System.Console.ANSI.Types as CT
-import qualified Data.ByteString.Lazy as B
-import Data.Aeson
 
 main :: IO ()
 main = do
-  json <- B.readFile "test/data/now.json"
-  let response         = fromJust $ decode json
-      tempDescription  = tempString $ currently response
-      warnDescription  = alertString $ alerts response
-      rainDescription  = precipString $ currently response
-      cloudDescription = cloudString $ currently response
-      fullString       = concat $ (L.intersperse [commaOut] $ filter (not . null) [tempDescription, cloudDescription, rainDescription, warnDescription]) ++ [[Output "\n" BrightWhite]]
-  mapM_ evaluateOutput fullString
+  config <- getConfig
+  manager <- newManager tlsManagerSettings
+  outputs <- runApp (do
+                      response <- getCurrentData
+                      return $ descriptions response
+                    ) $ Context config manager
+  case outputs of
+    Right output -> mapM_ evaluateOutput output
+    Left err     -> print $ "Error encountered: " ++ err
 
 evaluateOutput :: Output -> IO ()
 evaluateOutput output = do
@@ -29,6 +33,15 @@ evaluateOutput output = do
   C.setSGR [CT.SetColor CT.Foreground intensity colour]
   putStr $ T.unpack content
   C.setSGR [CT.Reset]
+
+descriptions :: Response -> [Output]
+descriptions response = fullString
+  where
+    tempDescription  = tempString $ currently response
+    warnDescription  = alertString $ alerts response
+    rainDescription  = precipString $ currently response
+    cloudDescription = cloudString $ currently response
+    fullString       = concat $ (L.intersperse [commaOut] $ filter (not . null) [tempDescription, cloudDescription, rainDescription, warnDescription]) ++ [[Output "\n" BrightWhite]]
 
 cloudString :: Maybe Point -> [Output]
 cloudString Nothing = []
