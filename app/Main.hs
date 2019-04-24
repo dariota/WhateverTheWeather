@@ -12,8 +12,6 @@ import Network.HTTP.Client.TLS
 import qualified Data.ByteString.Lazy as B
 import qualified Data.List as L
 import qualified Data.Text as T (Text, pack, unpack, concat)
-import qualified System.Console.ANSI as C
-import qualified System.Console.ANSI.Types as CT
 
 main :: IO ()
 main = do
@@ -24,15 +22,8 @@ main = do
                       return $ descriptions response
                     ) $ Context config manager
   case outputs of
-    Right output -> mapM_ evaluateOutput output
+    Right output -> putStr $ concat $ map evaluateOutput output
     Left err     -> print $ "Error encountered: " ++ err
-
-evaluateOutput :: Output -> IO ()
-evaluateOutput output = do
-  let (content, colour, intensity) = unpackOutput output
-  C.setSGR [CT.SetColor CT.Foreground intensity colour]
-  putStr $ T.unpack content
-  C.setSGR [CT.Reset]
 
 descriptions :: Response -> [Output]
 descriptions response = fullString

@@ -2,9 +2,10 @@ module Console
   (
     Output(..),
     Colour(..),
-    unpackOutput
+    evaluateOutput
   ) where
 
+import System.Console.ANSI (setSGRCode)
 import qualified Data.Text as T
 import qualified System.Console.ANSI.Types as A
 
@@ -24,6 +25,14 @@ data Colour =
     Cyan | BrightCyan |
     White | BrightWhite
   deriving (Show)
+
+evaluateOutput :: Output -> String
+evaluateOutput output = concat [sgrCode, body, reset]
+  where
+    (content, colour, intensity) = unpackOutput output
+    sgrCode = setSGRCode [A.SetColor A.Foreground intensity colour]
+    body    = T.unpack content
+    reset   = setSGRCode [A.Reset]
 
 unpackOutput :: Output -> (T.Text, A.Color, A.ColorIntensity)
 unpackOutput output = (content output, colour, intensity)
