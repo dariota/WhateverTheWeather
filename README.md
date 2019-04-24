@@ -16,3 +16,10 @@ PS1="\$(~/.bin/ps1Weather)"
 ```
 
 - Set up a cronjob to run the `updateWeather` script with whatever frequency you like
+
+## TODO
+
+- Implement the updateWeather script alongside the rest of the Haskell
+- Implement some command to actually display the alert contents and/or URIs
+- All the colours
+- All the configurability
