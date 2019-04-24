@@ -51,9 +51,10 @@ precipDescription kind intensity = Output (T.concat [kind, " (", T.pack $ show i
   where
     colour =
       case kind of
-        "rain"  -> Blue
-        "sleet" -> White
-        "snow"  -> BrightWhite
+        "rain"    -> Blue
+        "sleet"   -> White
+        "snow"    -> BrightWhite
+        otherwise -> BrightRed
 
 tempString :: Maybe Point -> [Output]
 tempString Nothing = []
