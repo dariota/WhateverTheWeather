@@ -2,6 +2,7 @@
 
 module Main where
 
+import Args
 import Config
 import Console
 import Context
@@ -12,7 +13,10 @@ import Network.HTTP.Client
 import Network.HTTP.Client.TLS
 
 main :: IO ()
-main = do
+main = withOpts weatherProgram alertProgram
+
+weatherProgram :: Program
+weatherProgram opts = do
   config <- getConfig
   manager <- newManager tlsManagerSettings
   outputs <- runApp (do
@@ -22,3 +26,7 @@ main = do
   case outputs of
     Right output -> putStr $ concat $ map evaluateOutput output
     Left err     -> print $ "Error encountered: " ++ err
+
+alertProgram :: Program
+alertProgram opts = do
+  print "alert time"
