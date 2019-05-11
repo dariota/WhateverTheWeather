@@ -25,8 +25,8 @@ weatherProgram opts = do
                     ) $ Context config manager
   case outputs of
     Right output -> putStr $ concat $ map evaluateOutput output
-    Left err     -> print $ "Error encountered: " ++ err
+    Left err     -> putStrLn $ "Error encountered: " ++ err
 
 alertProgram :: Program
 alertProgram opts = do
-  print "alert time"
+  putStrLn "alert time"
