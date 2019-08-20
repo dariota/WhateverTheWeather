@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-if [ -f ~/.wtw/cache ] && [ "$(find ~/.wtw/cache -mmin -6 -type f -print)" ]
+if [ -f ~/.wtw/cache ] && [ "$(find ~/.wtw/cache -mmin -11 -type f -print)" ]
 then
 	echo ""
 	cat ~/.wtw/cache
